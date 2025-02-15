@@ -6,29 +6,19 @@ import { usePathname, useRouter } from "next/navigation";
 import { useSession, signIn, signOut } from "next-auth/react";
 import Image from "next/image";
 
-type User = {
-  name:  string;
-  image: string;
-  email: string;
-}
-
 export function Header() {
   const router = useRouter();
   const pathname = usePathname();
   const { data: session, status } = useSession();
   const routeURL = process.env.NEXT_PUBLIC_ROUTE_URL;
-  const user: User|null = session ? session.user : null;
+  const user = session ? session.user : null;
 
   useEffect(() => {
     if (status === 'loading') return;
 
-    // 未認証かつトップページ以外にアクセスした場合はログインページにリダイレクト
+    // 未認証かつトップページ以外にアクセスした場合はトップページにリダイレクト
     if (!session && pathname !== '/') {
       router.push('/');
-
-    // 認証済かつトップページにアクセスした場合は仕訳ページにリダイレクト
-    } else if (session && pathname === '/') {
-      router.push('/receipts');
     }
   }, [session, status, pathname, router]);
 
@@ -36,11 +26,14 @@ export function Header() {
     <header className="sticty flex justify-between items-center py-2">
       <div>
         {user ? (
-          <Link href="/profile" className="flex gap-1 items-center px-4 py-3 rounded-full bg-gray-800">
+          <Link
+            href="/profile"
+            className="flex gap-1 items-center px-4 py-3 rounded-full bg-gray-800"
+          >
             <div className="avatar">
               <div className="w-8 rounded-full">
                 <Image
-                  src={user.image}
+                  src={user.image ?? "/icon.jpg"}
                   alt="猫は最高に可愛い"
                   width={32}
                   height={32}

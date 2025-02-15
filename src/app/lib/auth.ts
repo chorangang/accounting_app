@@ -14,6 +14,7 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
+
   callbacks: {
     async signIn({ account }) {
       if (account == null || account.access_token == null) return false;
@@ -25,11 +26,6 @@ export const authOptions: NextAuthOptions = {
         token.accessToken = account.access_token;
       }
       return token;
-    },
-
-    async session({ session, token }) {
-      session.accessToken = token.accessToken;
-      return session;
     },
   },
 };

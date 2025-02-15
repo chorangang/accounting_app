@@ -33,12 +33,12 @@ export default function Journals() {
   };
 
   // エントリ行を削除
-  const removeEntry = (id) => {
+  const removeEntry = (id: number) => {
     setEntries(entries.filter((entry) => entry.id !== id));
   };
 
   // エントリの値を更新
-  const updateEntry = (id, field, value) => {
+  const updateEntry = (id: number, field: "account" | "credit" | "debit", value: string) => {
     setEntries(
       entries.map((entry) =>
         entry.id === id ? { ...entry, [field]: value } : entry
