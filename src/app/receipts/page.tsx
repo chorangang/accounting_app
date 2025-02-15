@@ -55,11 +55,11 @@ export default function Receipts() {
     userHolders[0]?.id || ""
   );
 
-  // フォームの値を管理
-  const [description, setDescription] = useState({
-    filename: "",
-    description: "",
-  });
+  // // フォームの値を管理
+  // const [description, setDescription] = useState({
+  //   filename: "",
+  //   description: "",
+  // });
 
   // 領収書のアップロード処理（console.log で代用）
   const handleUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
