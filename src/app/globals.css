@@ -1,3 +1,7 @@
+/* Nes.css */
+@import "nes.css/css/nes.min.css";
+
+/* Tailwind */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
