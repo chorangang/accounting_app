@@ -16,6 +16,8 @@ export function Header() {
   useEffect(() => {
     if (status === 'loading') return;
 
+    console.log('session:', session);
+
     // 未認証かつトップページ以外にアクセスした場合はトップページにリダイレクト
     if (!session && pathname !== '/') {
       router.push('/');

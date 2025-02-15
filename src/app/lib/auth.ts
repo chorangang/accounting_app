@@ -27,6 +27,14 @@ export const authOptions: NextAuthOptions = {
       }
       return token;
     },
+
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id          = token.id as string; // session.user に id を追加
+        session.user.accessToken = token.accessToken as string; // session.user に accessToken を追加
+      }
+      return session;
+    },
   },
 };
 

@@ -63,6 +63,7 @@ export default function Journals() {
       alert("借方と貸方の金額が一致していません。");
       return;
     }
+
     // 保存処理をここに実装
     console.log("仕訳が保存されました:", entries);
   };
