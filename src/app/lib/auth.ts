@@ -14,9 +14,9 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
+
   callbacks: {
-    async signIn({ account, profile }) {
-      console.log("signIn", account, profile);
+    async signIn({ account }) {
       if (account == null || account.access_token == null) return false;
       return await isJoinedGuild(account.access_token);
     },
@@ -26,11 +26,6 @@ export const authOptions: NextAuthOptions = {
         token.accessToken = account.access_token;
       }
       return token;
-    },
-
-    async session({ session, token }) {
-      session.accessToken = token.accessToken;
-      return session;
     },
   },
 };
