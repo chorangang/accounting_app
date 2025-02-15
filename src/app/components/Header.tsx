@@ -28,7 +28,7 @@ export function Header() {
 
     // 認証済かつトップページにアクセスした場合は仕訳ページにリダイレクト
     } else if (session && pathname === '/') {
-      router.push('/journals');
+      router.push('/receipts');
     }
   }, [session, status, pathname, router]);
 
@@ -36,7 +36,7 @@ export function Header() {
     <header className="sticty flex justify-between items-center py-2">
       <div>
         {user ? (
-          <div className="flex gap-1 items-center px-4 py-3 rounded-full bg-gray-800">
+          <Link href="/profile" className="flex gap-1 items-center px-4 py-3 rounded-full bg-gray-800">
             <div className="avatar">
               <div className="w-8 rounded-full">
                 <Image
@@ -48,7 +48,7 @@ export function Header() {
               </div>
             </div>
             <div className="text-white text-lg">{user.name}</div>
-          </div>
+          </Link>
         ) : (
           <div className="flex gap-1 items-center">
             <div className="avatar">
@@ -70,8 +70,8 @@ export function Header() {
           {session ? (
             <>
               <li>
-                <Link href="/top">
-                  <button className="nes-btn">トップ</button>
+                <Link href="/receipts">
+                  <button className="nes-btn">領収書</button>
                 </Link>
               </li>
               <li>

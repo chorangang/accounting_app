@@ -1,3 +1,3 @@
 export default function FinancialResults () {
-  return <h1>ここに財務諸</h1>;
+  return <h1>いつかやる</h1>;
 }
