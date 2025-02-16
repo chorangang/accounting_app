@@ -16,11 +16,16 @@ export function Header() {
   useEffect(() => {
     if (status === 'loading') return;
 
-    console.log('session:', session);
-
     // 未認証かつトップページ以外にアクセスした場合はトップページにリダイレクト
     if (!session && pathname !== '/') {
       router.push('/');
+    }
+
+    if (session) {
+      fetch("/api", { credentials: "include" })
+        .then((res) => res.json())
+        .then((data) => console.log("API response:", data))
+        .catch((err) => console.error("API error:", err));
     }
   }, [session, status, pathname, router]);
 

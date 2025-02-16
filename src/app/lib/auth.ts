@@ -1,11 +1,15 @@
 import type { NextAuthOptions } from "next-auth";
 import DiscordProvider from "next-auth/providers/discord";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import { PrismaClient } from "@prisma/client";
 import { config } from "@/lib/constants";
+
+const prisma = new PrismaClient();
 
 export const authOptions: NextAuthOptions = {
   providers: [
     DiscordProvider({
-      clientId:     process.env.DISCORD_CLIENT_ID!,
+      clientId: process.env.DISCORD_CLIENT_ID!,
       clientSecret: process.env.DISCORD_CLIENT_SECRET!,
       authorization: {
         params: {
@@ -14,6 +18,12 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
+
+  adapter: PrismaAdapter(prisma),
+
+  session: {
+    strategy: "jwt",
+  },
 
   callbacks: {
     async signIn({ account }) {
@@ -28,13 +38,13 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
 
-    async session({ session, token }) {
-      if (session.user) {
-        session.user.id          = token.id as string; // session.user に id を追加
-        session.user.accessToken = token.accessToken as string; // session.user に accessToken を追加
-      }
-      return session;
-    },
+    // async session({ session, token }) {
+    //   if (session?.user) {
+    //     // console.log("session.user:", session.user);
+    //     session.user.accessToken = token.accessToken as string; // session.user に accessToken を追加
+    //   }
+    //   return session;
+    // },
   },
 };
 
@@ -48,6 +58,7 @@ interface Guild {
   permissions_new: string;
 }
 
+// 俺のサーバーに所属しているかどうかを確認する関数
 async function isJoinedGuild(accessToken: string): Promise<boolean> {
   const res: Response = await fetch(
     "https://discordapp.com/api/users/@me/guilds",
