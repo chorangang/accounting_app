@@ -2,6 +2,58 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAuthUser } from "@/lib/services/authServices";
 import prisma from "@/lib/prisma";
 
+export async function GET(req: NextRequest) {
+  // 認証ユーザーを取得
+  const authUser = await getAuthUser(req);
+
+  // 認証ユーザーが取得できない場合は401エラーを返す
+  if (!authUser) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
+  // 会計主体を取得する処理
+  try {
+    // URL のクエリパラメータから isJoined を取得
+    const { searchParams } = new URL(req.url);
+    const isJoined = searchParams.get("isJoined");
+    let holders;
+
+    if (isJoined === "true") {
+      // ユーザーが参加している会計主体を取得
+      holders = await prisma.accountHolder.findMany({
+        where: {
+          belongings: {
+            some: { userId: authUser.id },
+          },
+        },
+      });
+
+    } else if (isJoined === "false") {
+      // ユーザーが参加していない会計主体を取得
+      holders = await prisma.accountHolder.findMany({
+        where: {
+          belongings: {
+            none: { userId: authUser.id },
+          },
+        },
+      });
+
+    } else {
+      // isJoined が指定されていない場合は全件取得（必要に応じて変更してください）
+      holders = await prisma.accountHolder.findMany();
+    }
+
+    // 取得した会計主体をレスポンスとして返す
+    return NextResponse.json({ data: holders });
+  } catch (error) { // DB からの読み込みエラーが発生した場合
+    console.error("Error fetching AccountHolders:", error);
+    return NextResponse.json(
+      { message: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
+}
+
 export async function POST(req: NextRequest) {
   // 認証ユーザーを取得
   const authUser = await getAuthUser(req);
@@ -23,7 +75,7 @@ export async function POST(req: NextRequest) {
         name: name,
         type: type,
         startMonth:   startMonth,
-        closingMonth: closingMonth, // クライアントからの closingMonth を endMonth として保存
+        closingMonth: closingMonth,
       },
     });
 

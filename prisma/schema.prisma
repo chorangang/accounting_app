@@ -51,6 +51,7 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+  belongings    Belonging[] // リレーションは紐づけられる側にも書く
 
   @@map("users")
 }
@@ -73,6 +74,21 @@ model AccountHolder {
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
 
+  belongings Belonging[] // リレーションは紐づけられる側にも書く
+
   @@unique([id, name])
   @@map("account_holders")
+}
+
+model Belonging {
+  id              String        @id @default(cuid())
+  createdAt       DateTime      @default(now()) @map("created_at")
+  userId          String        @map("user_id")
+  accountHolderId String        @map("account_holder_id")
+
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountHolder   AccountHolder @relation(fields: [accountHolderId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, accountHolderId])
+  @@map("belongings")
 }
