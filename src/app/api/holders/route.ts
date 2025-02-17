@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthUser } from "@/lib/services/authServices";
 import prisma from "@/lib/prisma";
+import { AccountingHolder } from '@/lib/types/holders';
 
 export async function GET(req: NextRequest) {
   // 認証ユーザーを取得
@@ -20,11 +21,10 @@ export async function GET(req: NextRequest) {
 
     if (isJoined === "true") {
       // ユーザーが参加している会計主体を取得
-      holders = await prisma.accountHolder.findMany({
-        where: {
-          belongings: {
-            some: { userId: authUser.id },
-          },
+      holders = await prisma.belonging.findMany({
+        where: { userId: authUser.id },
+        include: {
+          accountHolder: true,
         },
       });
 

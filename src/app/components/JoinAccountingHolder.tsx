@@ -11,25 +11,6 @@ interface AccountingHolder {
   closingMonth: number;
 }
 
-// ダミー
-const accountingHolders: AccountingHolder[] = [
-  {
-    id: "uuid1", // UUID
-    name: "株式会社会計主体", // 会計主体名
-    type: "individual", // 個人 or 法人
-    startMonth: 2, // 開始月
-    closingMonth: 1, // 決算月
-  },
-  {
-    id: "uuid2", // UUID
-    name: "株式会社会計主体", // 会計主体名
-    type: "individual", // 個人 or 法人
-    startMonth: 2, // 開始月
-    closingMonth: 1, // 決算月
-  },
-];
-
-
 export function JoinAccountingHolder() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [holderId, setHolderId] = useState<string>("");
@@ -51,8 +32,6 @@ export function JoinAccountingHolder() {
       return;
     }
 
-    console.log("選択された会計主体:", holderId);
-
     fetch("/api/belongings", {
       method: "POST",
       headers: {
@@ -62,9 +41,11 @@ export function JoinAccountingHolder() {
     })
       .then(async (res) => {
         console.log(res);
-        const body: {message: string, data: AccountingHolder } = await res.json();
+        const body: { message: string; data: AccountingHolder } = await res.json();
         alert(body.message);
-        setHolders(holders.filter((holder) => holder.id !== holderId));
+
+        // 強引にリロード
+        location.reload();
       })
       .catch((error) => alert(error.message));
   };

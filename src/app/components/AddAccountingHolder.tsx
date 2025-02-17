@@ -58,8 +58,6 @@ export function AddAccountingHolder () {
       body: JSON.stringify(form),
     });
 
-    console.log("会計主体を作成しました。", form);
-
     // フォームの初期化
     setForm({
       name: "",
@@ -67,6 +65,9 @@ export function AddAccountingHolder () {
       startMonth: 1,
       closingMonth: 12,
     });
+
+    // リロードして強引に再描画
+    location.reload();
   };
 
   return (
