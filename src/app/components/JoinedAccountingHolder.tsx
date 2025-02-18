@@ -1,17 +1,33 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import type { BelongingWithAccountHolder } from "@/lib/types/holders";
+
+interface JoinedAccountingHolderProps {
+  accountHolder: {
+    id: string;
+    name: string;
+    type: "individual" | "corporate";
+    startMonth: number;
+    closingMonth: number;
+    createdAt: string;
+    updatedAt: string;
+  };
+  accountingHolderId: string;
+  userId: string;
+  id: string;
+  createdAt: string;
+}
 
 export function JoinedAccountingHolder() {
   const [joinedHolderId, setJoinedHolderId] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [holders, setHolders] = useState<BelongingWithAccountHolder>([]);
+  const [holders, setHolders] = useState<JoinedAccountingHolderProps[]>([]);
 
   useEffect(() => {
     fetch(`/api/holders?isJoined=true`)
       .then((res) => res.json())
       .then((data) => {
+        console.log("参加済みの会計主体一覧:", data.data);
         setHolders(data.data);
         setIsLoading(false);
       })
@@ -34,7 +50,6 @@ export function JoinedAccountingHolder() {
       method: "DELETE",
     })
       .then(async (res) => {
-        console.log(res);
         const body: { message: string } = await res.json();
         alert(body.message);
 
@@ -57,7 +72,7 @@ export function JoinedAccountingHolder() {
         {isLoading ? (
           <p className="nes-text is-disabled">Loading...</p>
         ) : (
-          holders.map((holder: BelongingWithAccountHolder) => (
+          holders.map((holder: JoinedAccountingHolderProps) => (
             <label key={holder.id} className="rounded-lg hover:bg-gray-100 p-2">
               <input
                 type="radio"

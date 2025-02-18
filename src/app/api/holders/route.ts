@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthUser } from "@/lib/services/authServices";
 import prisma from "@/lib/prisma";
-import { AccountingHolder } from '@/lib/types/holders';
 
 export async function GET(req: NextRequest) {
   // 認証ユーザーを取得

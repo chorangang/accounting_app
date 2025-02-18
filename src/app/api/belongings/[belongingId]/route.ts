@@ -3,7 +3,10 @@ import { getAuthUser } from "@/lib/services/authServices";
 import prisma from "@/lib/prisma";
 
 
-export async function DELETE(req: NextRequest, { params }: { params: { belongingId: string } },) {
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ belongingId: string}> }
+) {
   const authUser = await getAuthUser(req);
 
   if (!authUser) {
@@ -11,11 +14,10 @@ export async function DELETE(req: NextRequest, { params }: { params: { belonging
   }
 
   // URLのパスパラメータからIDを取得
-  const beloigingId = params.belongingId;
+  // const { belongingId } = context.params;
+  const belongingId = (await params).belongingId;
 
-  console.log("beloigingId:", beloigingId);
-
-  if (!beloigingId) {
+  if (!belongingId) {
     return NextResponse.json(
       { message: "Missing required query parameters" },
       { status: 400 }
@@ -26,7 +28,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { belonging
     // deleteManyを使用して該当するレコードを削除
     const deleted = await prisma.belonging.deleteMany({
       where: {
-        id: beloigingId
+        id: belongingId,
       },
     });
 
@@ -41,9 +43,11 @@ export async function DELETE(req: NextRequest, { params }: { params: { belonging
       { message: "Association deleted" },
       { status: 200 }
     );
-
   } catch (error) {
     console.error("Error deleting association:", error);
-    return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }

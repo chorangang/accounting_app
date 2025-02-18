@@ -40,7 +40,6 @@ export function JoinAccountingHolder() {
       body: JSON.stringify({ accountHolderId: holderId}),
     })
       .then(async (res) => {
-        console.log(res);
         const body: { message: string; data: AccountingHolder } = await res.json();
         alert(body.message);
 

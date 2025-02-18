@@ -21,12 +21,6 @@ export function Header() {
       router.push('/');
     }
 
-    if (session) {
-      fetch("/api", { credentials: "include" })
-        .then((res) => res.json())
-        .then((data) => console.log("API response:", data))
-        .catch((err) => console.error("API error:", err));
-    }
   }, [session, status, pathname, router]);
 
   return (
