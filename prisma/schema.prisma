@@ -92,3 +92,13 @@ model Belonging {
   @@unique([userId, accountHolderId])
   @@map("belongings")
 }
+
+model Receipt {
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now()) @map("created_at")
+  filePath      String   @map("file_path")
+  description   String   @map("description")
+  isJournalized Boolean  @default(false) @map("is_journalized")
+
+  @@map("receipts")
+}
