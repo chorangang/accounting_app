@@ -5,4 +5,13 @@ export const config = {
     clientSecret: process.env.DISCORD_CLIENT_SECRET,
     allowedGuildId: process.env.ALLOWED_GUILD_ID,
   },
+  s3: {
+    region: process.env.R2_REGION,
+    endpoint: process.env.R2_ENDPOINT,
+    credentials: {
+      accessKeyId: process.env.R2_API_KEY,
+      secretAccessKey: process.env.R2_API_SECRET,
+    },
+    bucket: process.env.R2_BUCKET,
+  },
 };

@@ -1,18 +1,10 @@
 "use client";
 
 import { useState } from "react";
-
-// 会計主体の型
-interface AccountingHolder {
-  id:  string; // UUID APIで発行するのでオプショナルとする
-  name: string;
-  type: "individual" | "corporate";
-  startMonth: number;
-  closingMonth: number;
-}
+import { AccountingHolderParams } from "@/lib/types/holders";
 
 export function AddAccountingHolder () {
-  const [form, setForm] = useState<Omit<AccountingHolder, "id">>({
+  const [form, setForm] = useState<Omit<AccountingHolderParams, "id">>({
     name: "",
     type: "individual",
     startMonth: 4,
@@ -57,8 +49,14 @@ export function AddAccountingHolder () {
     // 開始月と決算月の差が12ヶ月かチェックし、適切でないならエラー
     if (!fiscalMonthChecker(form.startMonth, form.closingMonth)) return;
 
-    // 会計主体を追加
-    console.log("会計主体を作成しました。", form);
+    // api/holders に POST リクエストを送信し、会計主体を作成
+    fetch("/api/holders", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(form),
+    });
 
     // フォームの初期化
     setForm({
@@ -67,6 +65,9 @@ export function AddAccountingHolder () {
       startMonth: 1,
       closingMonth: 12,
     });
+
+    // リロードして強引に再描画
+    location.reload();
   };
 
   return (
@@ -128,8 +129,8 @@ export function AddAccountingHolder () {
       </div>
 
       <div className="flex justify-center my-4">
-        <button onClick={addHolder} className="nes-btn is-primary px-5 font-semibold">
-          追 加
+        <button onClick={addHolder} className="nes-btn is-primary font-semibold">
+          追加する
         </button>
       </div>
     </>

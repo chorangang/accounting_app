@@ -1,64 +1,25 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import type { JoinedAccountingHolderProps } from "@/lib/types/holders";
 
-// 会計主体の型
-interface AccountingHolder {
-  id: string;
-  name: string;
-  type: "individual" | "corporate";
-  startMonth: number;
-  closingMonth: number;
-}
-
-// ダミー
-const accountingHolders: AccountingHolder[] = [
-  {
-    id: "uuid3", // UUID
-    name: "株式会社会計主体", // 会計主体名
-    type: "individual", // 個人 or 法人
-    startMonth: 2, // 開始月
-    closingMonth: 1, // 決算月
-  },
-  {
-    id: "uuid4", // UUID
-    name: "株式会社会計主体", // 会計主体名
-    type: "individual", // 個人 or 法人
-    startMonth: 2, // 開始月
-    closingMonth: 1, // 決算月
-  },
-  {
-    id: "uuid5", // UUID
-    name: "株式会社会計主体", // 会計主体名
-    type: "individual", // 個人 or 法人
-    startMonth: 2, // 開始月
-    closingMonth: 1, // 決算月
-  },
-  {
-    id: "uuid6", // UUID
-    name: "株式会社会計主体", // 会計主体名
-    type: "individual", // 個人 or 法人
-    startMonth: 2, // 開始月
-    closingMonth: 1, // 決算月
-  },
-  {
-    id: "uuid7", // UUID
-    name: "株式会社会計主体", // 会計主体名
-    type: "individual", // 個人 or 法人
-    startMonth: 2, // 開始月
-    closingMonth: 1, // 決算月
-  },
-  {
-    id: "uuid8", // UUID
-    name: "株式会社会計主体", // 会計主体名
-    type: "individual", // 個人 or 法人
-    startMonth: 2, // 開始月
-    closingMonth: 1, // 決算月
-  },
-];
 
 export function JoinedAccountingHolder() {
   const [joinedHolderId, setJoinedHolderId] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [holders, setHolders] = useState<JoinedAccountingHolderProps[]>([]);
+
+  useEffect(() => {
+    fetch(`/api/holders?isJoined=true`)
+      .then((res) => res.json())
+      .then((data) => {
+        setHolders(data.data);
+        setIsLoading(false);
+      })
+      .catch((error) =>
+        console.error("Error fetching AccountingHolders:", error)
+      );
+  }, []);
 
   const deleteAccountHolder = () => {
     if (!joinedHolderId) {
@@ -66,7 +27,17 @@ export function JoinedAccountingHolder() {
       return;
     }
 
-    console.log("選択された会計主体:", joinedHolderId);
+    fetch(`/api/belongings/${joinedHolderId}`, {
+      method: "DELETE",
+    })
+      .then(async (res) => {
+        const body: { message: string } = await res.json();
+        alert(body.message);
+
+        // 強引にリロード
+        location.reload();
+      })
+      .catch((error) => alert(error.message));
   }
 
   return (
@@ -79,18 +50,22 @@ export function JoinedAccountingHolder() {
         className="flex flex-col items-center justify-center gap-4 py-4 my-4
         max-h-80 overflow-scroll border-[1px] border-gray-100 shadow-inner rounded-lg"
       >
-        {accountingHolders.map((holder: AccountingHolder) => (
-          <label key={holder.id} className="rounded-lg hover:bg-gray-100 p-2">
-            <input
-              type="radio"
-              name="holder"
-              className="nes-radio"
-              value={holder.id}
-              onChange={() => setJoinedHolderId(holder.id)}
-            />
-            <span>{holder.name}</span>
-          </label>
-        ))}
+        {isLoading ? (
+          <p className="nes-text is-disabled">Loading...</p>
+        ) : (
+          holders.map((holder: JoinedAccountingHolderProps) => (
+            <label key={holder.id} className="rounded-lg hover:bg-gray-100 p-2">
+              <input
+                type="radio"
+                name="holder"
+                className="nes-radio"
+                value={holder.id}
+                onChange={() => setJoinedHolderId(holder.id)}
+              />
+              <span>{holder.accountHolder.name}</span>
+            </label>
+          ))
+        )}
       </div>
 
       <div className="w-full flex justify-center">
