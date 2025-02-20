@@ -44,6 +44,7 @@ export async function GET(req: NextRequest) {
 
     // 取得した会計主体をレスポンスとして返す
     return NextResponse.json({ data: holders });
+
   } catch (error) { // DB からの読み込みエラーが発生した場合
     console.error("Error fetching AccountHolders:", error);
     return NextResponse.json(

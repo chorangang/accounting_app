@@ -68,11 +68,16 @@ export function Header() {
                   <button className="nes-btn">領収書</button>
                 </Link>
               </li>
-              <li>
+              {/* コメントアウトしておく。
+              仕訳は領収書から作成するように決めた(2025/02/18)が、
+              領収書IDを仕訳に紐づける方法が今のところクエリパラメータを持って仕訳ページに行くことしかないので、
+              直接/journalsに来れてしまうのが都合が悪いのでコメントアウト。
+              仕訳の履歴は決算から確認できるようにする。 */}
+              {/* <li>
                 <Link href="/journals">
                   <button className="nes-btn is-primary">仕 訳</button>
                 </Link>
-              </li>
+              </li> */}
               <li>
                 <Link href="/financial-results">
                   <button className="nes-btn is-success">決 算</button>

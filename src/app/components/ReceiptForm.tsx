@@ -1,6 +1,4 @@
-// このコンポーネントはサーバーコンポーネントなので "use client" は不要です
 import { postReceipt, uploadFile } from "@/_actions/receiptActions";
-
 
 export default function ReceiptForm() {
   // サーバー側で実行されるアクションとして定義

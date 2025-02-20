@@ -1,20 +1,10 @@
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { generateS3Client } from "@/lib/services/s3Client";
 import prisma from "@/lib/prisma";
 import { config } from "@/lib/constants";
 import { parseYYYYMMDD } from "@/lib/utils";
 import type { Receipt, PrismaReceipt } from "@/lib/types/receipt.type";
 
-
-function generateS3Client() {
-  return new S3Client({
-    region: config.s3.region!,
-    endpoint: config.s3.endpoint!,
-    credentials: {
-      accessKeyId: config.s3.credentials.accessKeyId!,
-      secretAccessKey: config.s3.credentials.secretAccessKey!,
-    },
-  });
-}
 
 export async function uploadFile(file: File): Promise<string> {
   const s3 = generateS3Client();

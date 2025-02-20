@@ -1,3 +1,8 @@
+/**
+ * Date型の日付をYYYY-MM-DD形式の文字列に変換する
+ * @param date 
+ * @returns 
+ */
 export function parseYYYYMMDD (date: Date): string {
   const y = date.getFullYear();
   const m = date.getMonth() + 1;

@@ -12,3 +12,10 @@ export interface PrismaReceipt {
   description: string;
   createdAt: Date;
 }
+
+
+export interface ReceiptWithPresingedUrl {
+  id: string;
+  description: string;
+  presignedUrl: string;
+}

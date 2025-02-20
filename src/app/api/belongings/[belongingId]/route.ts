@@ -14,7 +14,6 @@ export async function DELETE(
   }
 
   // URLのパスパラメータからIDを取得
-  // const { belongingId } = context.params;
   const belongingId = (await params).belongingId;
 
   if (!belongingId) {

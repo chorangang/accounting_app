@@ -23,7 +23,7 @@ export default async function Receipts() {
           <li key={receipt.id}>
             <Link
               href={`/journals?receiptId=${receipt.id}`}
-              className="flex justify-between nes-text p-3 hover:bg-gray-100"
+              className="flex justify-between bg-gray-50 p-3 rounded-lg shadow-md hover:bg-gray-200"
             >
               <span>{receipt.description}</span>
               <span>{receipt.createdAt}</span>

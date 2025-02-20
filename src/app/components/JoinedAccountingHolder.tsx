@@ -1,22 +1,8 @@
 'use client';
 
 import { useState, useEffect } from "react";
+import type { JoinedAccountingHolderProps } from "@/lib/types/holders";
 
-interface JoinedAccountingHolderProps {
-  accountHolder: {
-    id: string;
-    name: string;
-    type: "individual" | "corporate";
-    startMonth: number;
-    closingMonth: number;
-    createdAt: string;
-    updatedAt: string;
-  };
-  accountingHolderId: string;
-  userId: string;
-  id: string;
-  createdAt: string;
-}
 
 export function JoinedAccountingHolder() {
   const [joinedHolderId, setJoinedHolderId] = useState<string>("");
@@ -27,7 +13,6 @@ export function JoinedAccountingHolder() {
     fetch(`/api/holders?isJoined=true`)
       .then((res) => res.json())
       .then((data) => {
-        console.log("参加済みの会計主体一覧:", data.data);
         setHolders(data.data);
         setIsLoading(false);
       })
@@ -41,10 +26,6 @@ export function JoinedAccountingHolder() {
       alert("少なくとも1つの会計主体を選択してください。");
       return;
     }
-
-    console.log("選択された会計主体:", joinedHolderId);
-
-    debugger;
 
     fetch(`/api/belongings/${joinedHolderId}`, {
       method: "DELETE",

@@ -75,6 +75,7 @@ model AccountHolder {
   updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
 
   belongings Belonging[] // リレーションは紐づけられる側にも書く
+  journals   Journal[]   // リレーションは紐づけられる側にも書く
 
   @@unique([id, name])
   @@map("account_holders")
@@ -100,5 +101,47 @@ model Receipt {
   description   String   @map("description")
   isJournalized Boolean  @default(false) @map("is_journalized")
 
+  journals      Journal[] // リレーションは紐づけられる側にも書く
+
   @@map("receipts")
+}
+
+// 勘定科目マスタ
+model AccountTitle {
+  id Int @id @default(autoincrement())
+  name String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  entries Entry[] // リレーションは紐づけられる側にも書く
+
+  @@map("account_titles")
+}
+
+model Journal {
+  id          String   @id @default(cuid())
+  date        DateTime @map("date")
+  description String   @map("description")
+  receiptId   String   @map("receipt_id")
+  accountId   String   @map("account_holder_id")
+
+  receipt       Receipt        @relation(fields: [receiptId], references: [id], onDelete: Cascade)
+  AccountHolder AccountHolder  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  entries Entry[] // リレーションは紐づけられる側にも書く
+
+  @@map("journals")
+}
+
+model Entry {
+  id             String   @id @default(cuid())
+  journalId      String   @map("journal_id")
+  type           String   @map("type") // "debit" or "credit" 貸方か借方
+  accountTitleId Int      @map("account_title_id")
+  amount         Int      @map("amount")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  accountTitle AccountTitle @relation(fields: [accountTitleId], references: [id])
+  journal      Journal @relation(fields: [journalId], references: [id], onDelete: Cascade)
+
+  @@map("entries")
 }
