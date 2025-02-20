@@ -1,0 +1,147 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String  @map("user_id")
+  type               String
+  provider           String
+  providerAccountId  String  @map("provider_account_id")
+  refresh_token      String? @db.Text
+  access_token       String? @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String? @db.Text
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime? @map("email_verified")
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  belongings    Belonging[] // リレーションは紐づけられる側にも書く
+
+  @@map("users")
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+model AccountHolder {
+  id       String  @id @default(cuid())
+  name     String @map("name")
+  type     String @map("type")
+  startMonth   Int @map("start_month")
+  closingMonth Int @map("closing_month")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
+
+  belongings Belonging[] // リレーションは紐づけられる側にも書く
+  journals   Journal[]   // リレーションは紐づけられる側にも書く
+
+  @@unique([id, name])
+  @@map("account_holders")
+}
+
+model Belonging {
+  id              String        @id @default(cuid())
+  createdAt       DateTime      @default(now()) @map("created_at")
+  userId          String        @map("user_id")
+  accountHolderId String        @map("account_holder_id")
+
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountHolder   AccountHolder @relation(fields: [accountHolderId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, accountHolderId])
+  @@map("belongings")
+}
+
+model Receipt {
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now()) @map("created_at")
+  filePath      String   @map("file_path")
+  description   String   @map("description")
+  isJournalized Boolean  @default(false) @map("is_journalized")
+
+  journals      Journal[] // リレーションは紐づけられる側にも書く
+
+  @@map("receipts")
+}
+
+// 勘定科目マスタ
+model AccountTitle {
+  id Int @id @default(autoincrement())
+  name String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  entries Entry[] // リレーションは紐づけられる側にも書く
+
+  @@map("account_titles")
+}
+
+model Journal {
+  id          String   @id @default(cuid())
+  date        DateTime @map("date")
+  description String   @map("description")
+  receiptId   String   @map("receipt_id")
+  accountId   String   @map("account_holder_id")
+
+  receipt       Receipt        @relation(fields: [receiptId], references: [id], onDelete: Cascade)
+  AccountHolder AccountHolder  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  entries Entry[] // リレーションは紐づけられる側にも書く
+
+  @@map("journals")
+}
+
+model Entry {
+  id             String   @id @default(cuid())
+  journalId      String   @map("journal_id")
+  type           String   @map("type") // "debit" or "credit" 貸方か借方
+  accountTitleId Int      @map("account_title_id")
+  amount         Int      @map("amount")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  accountTitle AccountTitle @relation(fields: [accountTitleId], references: [id])
+  journal      Journal @relation(fields: [journalId], references: [id], onDelete: Cascade)
+
+  @@map("entries")
+}

@@ -40,7 +40,7 @@ export default async function RootLayout({
         className={`${dotGothic16.className} antialiased`}
         // className={`${geistSans.variable} ${geistMono.variable} ${dotGothic16.variable} antialiased`}
       >
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-2xl mx-auto p-2">
           <AuthProvider session={session}>
             <Header />
           </AuthProvider>
