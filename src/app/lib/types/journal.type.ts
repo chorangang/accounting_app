@@ -6,6 +6,14 @@ export interface Entry {
   credit: string;
 }
 
+type EntryType = 'debit' | 'credit';
+
+export interface EntryParams {
+  accountTitleId: number;
+  type: EntryType;
+  amount: number;
+}
+
 export interface AccountTitle {
   id: number;
   name: string;

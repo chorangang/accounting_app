@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getAuthUser } from "@/lib/services/authServices";
-import type { JournalProps } from "@/lib/types/journal.type";
+import type { JournalProps, EntryParams } from "@/lib/types/journal.type";
 
 export async function GET(req: NextRequest) {
   const authUser = await getAuthUser(req);
@@ -89,17 +89,17 @@ export async function POST(req: NextRequest) {
     // リクエストボディから JSON をパース
     const { journal, entries } = await req.json();
 
-    console.log("Journal data:", journal, entries, prisma.journal);
+    console.log(entries);
 
     // Journal レコードの作成
     const newJournal = await prisma.journal.create({
       data: {
-        date:        new Date(journal.date), // 日付文字列を Date 型に変換
+        date: new Date(journal.date), // 日付文字列を Date 型に変換
         description: journal.description,
-        receiptId:   journal.receiptId,
-        accountId:   journal.accountId,
+        receiptId: journal.receiptId,
+        accountId: journal.accountId,
         entries: {
-          create: entries.map((entry: any) => ({
+          create: entries.map((entry: EntryParams) => ({
             type: entry.type,
             accountTitleId: Number(entry.accountTitleId),
             amount: entry.amount,
@@ -115,6 +115,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ data: newJournal }, { status: 201 });
 
   } catch (error) {
+    // console.error("Error saving journal", error.stack);
     console.error("Error saving journal", error);
 
     return NextResponse.json(
